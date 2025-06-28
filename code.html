@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nota Butik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #fffaf0;
+            font-family: 'Arial', sans-serif;
+        }
+        .invoice-container {
+            background-color: #fff0f5;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        .table-row:hover {
+            background-color: #fff9fa;
+        }
+        .signature-box {
+            border-top: 1px dashed #cbd5e0;
+            margin-top: 2rem;
+        }
+        input, textarea {
+            background-color: transparent;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-bottom: 1px solid #f687b3;
+        }
+    </style>
+</head>
+<body class="bg-pink-50 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+        <div class="invoice-container bg-gradient-to-r from-pink-50 to-yellow-50 rounded-lg">
+            <!-- Header Section -->
+            <div class="header flex justify-between mb-8">
+                <!-- Recipient Info -->
+                <div class="recipient-info w-1/2">
+                    <h2 class="text-xl font-bold text-pink-800 mb-4">Penerima:</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-pink-600">Nama Penerima</label>
+                            <input type="text" id="name" class="w-full text-pink-800 font-medium" placeholder="Masukkan nama penerima">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-pink-600">Nomor HP</label>
+                            <input type="text" id="phone" class="w-full text-pink-800" placeholder="Masukkan nomor HP">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-pink-600">Alamat</label>
+                            <textarea id="address" rows="2" class="w-full text-pink-800" placeholder="Masukkan alamat lengkap"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Logo -->
+                <div class="logo w-1/3 text-right">
+                    <img src="https://placehold.co/1440x604" alt="Logo Butik Elegant dengan tulisan 'Boutique Elegant' dalam warna pink dan emas" class="rounded-lg shadow-md border border-pink-200">
+                </div>
+            </div>
+            
+            <!-- Invoice Table -->
+            <div class="invoice-table mb-8">
+                <h2 class="text-xl font-bold text-pink-800 mb-4 text-center border-b-2 border-pink-200 pb-2">NOTA PEMBELIAN</h2>
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-pink-100 text-pink-800">
+                            <th class="py-3 px-4 text-left rounded-tl-lg">No</th>
+                            <th class="py-3 px-4 text-left">Nama Barang</th>
+                            <th class="py-3 px-4 text-left">Harga</th>
+                            <th class="py-3 px-4 text-left">Jumlah</th>
+                            <th class="py-3 px-4 text-left rounded-tr-lg">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-table">
+                        <!-- Dynamic rows will be added here -->
+                    </tbody>
+                </table>
+                
+                <!-- Total Price -->
+                <div class="total-price flex justify-end mt-4">
+                    <div class="w-1/4 bg-pink-50 p-3 rounded-lg border border-pink-200">
+                        <div class="flex justify-between">
+                            <span class="text-pink-800 font-semibold">Total:</span>
+                            <span id="total-price" class="text-pink-800 font-bold">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Add Item Button -->
+                <div class="mt-4">
+                    <button onclick="addItem()" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg shadow">
+                        + Tambah Barang
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Signatures -->
+            <div class="signature-box pt-6">
+                <div class="flex justify-between">
+                    <div class="signature-penerima w-1/2">
+                        <div class="mb-12">
+                            <p class="text-center text-pink-800 mb-2">Tanda Tangan Penerima</p>
+                            <div class="border border-pink-300 rounded-lg h-24 w-32 mx-auto"></div>
+                        </div>
+                    </div>
+                    <div class="signature-owner w-1/2">
+                        <div class="mb-12">
+                            <p class="text-center text-pink-800 mb-2">Tanda Tangan Owner</p>
+                            <div class="border border-pink-300 rounded-lg h-24 w-32 mx-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-between mt-8">
+                <button onclick="printInvoice()" class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg shadow-md">
+                    Cetak Nota
+                </button>
+                <button onclick="saveInvoice()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg shadow-md">
+                    Simpan Nota
+                </button>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div class="hidden" id="preview-container">
+            <div class="bg-white p-8 rounded-lg shadow-xl mx-auto my-8 max-w-4xl">
+                <button onclick="closePreview()" class="mb-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg float-right">
+                    Kembali Edit
+                </button>
+                <div id="invoice-preview" class="mt-12"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize with 5 empty rows
+        document.addEventListener('DOMContentLoaded', function() {
+            for (let i = 0; i < 2; i++) {
+                addItem();
+            }
+        });
+
+        let itemCount = 0;
+        
+        function addItem() {
+            itemCount++;
+            const tableBody = document.getElementById('items-table');
+            
+            const row = document.createElement('tr');
+            row.className = 'table-row border-b border-pink-100';
+            row.innerHTML = `
+                <td class="py-3 px-4">${itemCount}</td>
+                <td class="py-3 px-4">
+                    <input type="text" class="item-name w-full" placeholder="Nama barang">
+                </td>
+                <td class="py-3 px-4">
+                    <input type="number" class="item-price w-full" placeholder="Rp" oninput="calculateTotal()">
+                </td>
+                <td class="py-3 px-4">
+                    <input type="number" class="item-quantity w-full" placeholder="Jumlah" min="1" value="1" oninput="calculateTotal()">
+                </td>
+                <td class="py-3 px-4 item-total"></td>
+            `;
+            
+            tableBody.appendChild(row);
+            calculateTotal();
+        }
+        
+        function calculateTotal() {
+            const rows = document.querySelectorAll('#items-table tr');
+            let grandTotal = 0;
+            
+            rows.forEach(row => {
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const total = price * quantity;
+                
+                row.querySelector('.item-total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+                grandTotal += total;
+            });
+            
+            document.getElementById('total-price').textContent = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+        }
+        
+        function printInvoice() {
+            // Capture all data
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            
+            let itemsHtml = '';
+            let totalPrice = 0;
+            
+            document.querySelectorAll('#items-table tr').forEach((row, index) => {
+                const no = index + 1;
+                const itemName = row.querySelector('.item-name').value || '-';
+                const itemPrice = parseFloat(row.querySelector('.item-price').value) || 0;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const total = itemPrice * quantity;
+                
+                itemsHtml += `
+                    <tr class="border-b border-gray-200">
+                        <td class="py-2 px-4">${no}</td>
+                        <td class="py-2 px-4">${itemName}</td>
+                        <td class="py-2 px-4">Rp ${itemPrice.toLocaleString('id-ID')}</td>
+                        <td class="py-2 px-4">${quantity}</td>
+                        <td class="py-2 px-4">Rp ${total.toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
+                
+                totalPrice += total;
+            });
+            
+            const preview = document.getElementById('invoice-preview');
+            preview.innerHTML = `
+                <div class="bg-gradient-to-r from-pink-50 to-yellow-50 p-6 rounded-lg">
+                    <!-- Header -->
+                    <div class="flex justify-between mb-6">
+                        <div>
+                            <h3 class="font-bold">Kepada:</h3>
+                            <p>${name || 'Nama Penerima'}</p>
+                            <p>${phone || 'Nomor HP'}</p>
+                            <p>${address || 'Alamat'}</p>
+                        </div>
+                        <div>
+                            <img src="https://placehold.co/1440x604" alt="Logo Butik" class="h-24">
+                        </div>
+                    </div>
+                    
+                    <!-- Invoice Title -->
+                    <h2 class="text-xl font-bold text-center mb-4 border-b-2 border-pink-200 pb-2">NOTA PEMBELIAN</h2>
+                    
+                    <!-- Items Table -->
+                    <table class="w-full mb-4">
+                        <thead>
+                            <tr class="bg-pink-100">
+                                <th class="p-2 text-left">No</th>
+                                <th class="p-2 text-left">Nama Barang</th>
+                                <th class="p-2 text-left">Harga</th>
+                                <th class="p-2 text-left">Jumlah</th>
+                                <th class="p-2 text-left">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+                    
+                    <!-- Total -->
+                    <div class="flex justify-end">
+                        <div class="bg-pink-50 p-3 rounded-lg border border-pink-200 w-1/4">
+                            <div class="flex justify-between">
+                                <span class="font-semibold">Total:</span>
+                                <span class="font-bold">Rp ${totalPrice.toLocaleString('id-ID')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Signatures -->
+                    <div class="flex justify-between mt-12 pt-6 border-t border-dashed border-gray-300">
+                        <div class="w-1/2 text-center">
+                            <p class="mb-16">Tanda Tangan Penerima</p>
+                            <div class="border border-gray-300 h-20 w-32 mx-auto"></div>
+                        </div>
+                        <div class="w-1/2 text-center">
+                            <p class="mb-16">Tanda Tangan Owner</p>
+                            <div class="border border-gray-300 h-20 w-32 mx-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Show preview
+            document.getElementById('preview-container').classList.remove('hidden');
+            document.getElementById('preview-container').classList.add('block');
+            
+            // Hide edit container
+            document.querySelector('.invoice-container').classList.add('hidden');
+        }
+        
+        function closePreview() {
+            document.getElementById('preview-container').classList.remove('block');
+            document.getElementById('preview-container').classList.add('hidden');
+            document.querySelector('.invoice-container').classList.remove('hidden');
+        }
+        
+        function saveInvoice() {
+            printInvoice(); // Show preview first
+            
+            setTimeout(() => {
+                const invoiceContent = document.getElementById('invoice-preview').innerHTML;
+                const blob = new Blob([invoiceContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `nota-butik-${new Date().toISOString().slice(0, 10)}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 500);
+        }
+    </script>
+</body>
+</html>
